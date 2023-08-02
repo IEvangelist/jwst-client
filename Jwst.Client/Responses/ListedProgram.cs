@@ -3,4 +3,4 @@
 
 namespace Jwst.Client.Responses;
 
-public record class InstrumentResponse(string Instrument);
+public record ListedProgram(int Program);

@@ -3,8 +3,11 @@
 
 namespace Jwst.Client.Responses;
 
-public record class ProgramListResponse(
-    [property: JsonPropertyName("body")] ProgramResponse[] Programs,
+public record ProgramListResponse(
     int StatusCode,
-    string? Error)
-    : Response(StatusCode, Error);
+    ListedProgram[] Body,
+    string? Error) :
+    ResponseOf<ListedProgram[]>(
+        StatusCode,
+        Body,
+        Error);

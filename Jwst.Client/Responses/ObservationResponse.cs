@@ -3,11 +3,11 @@
 
 namespace Jwst.Client.Responses;
 
-public record SuffixListResponse(
+public record ObservationResponse(
     int StatusCode,
-    SuffixDetails[] Body,
+    ObservationDetails[] Body,
     string? Error) :
-    ResponseOf<SuffixDetails[]>(
+    ResponseOf<ObservationDetails[]>(
         StatusCode,
         Body,
         Error);

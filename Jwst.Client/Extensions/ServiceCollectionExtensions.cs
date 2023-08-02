@@ -1,11 +1,6 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
-using Jwst.Client.Json;
-using Microsoft.Extensions.Http.Resilience;
-using Microsoft.Extensions.Http.Telemetry.Logging;
-using Microsoft.Extensions.Http.Telemetry.Metering;
-
 namespace Jwst.Client.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -22,30 +17,37 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.Configure<JamesWebbApiSettings>(
-            configuration.GetSection(key: JamesWebbApiSettings.SectionName));
+            config: configuration.GetSection(key: JamesWebbApiSettings.SectionName));
 
         services.AddSingleton<IValidateOptions<JamesWebbApiSettings>, JamesWebbApiSettings>();
 
+        services.AddRedaction();
+
+        services.AddLatencyContext();
+
+        services.AddDefaultHttpClientLatencyTelemetry();
+
         services.AddHttpClient(
-            nameof(IJamesWebbClient),
-            static (services, client) =>
+            name: nameof(IJamesWebbClient),
+            configureClient: static (services, client) =>
             {
                 client.BaseAddress = new("https://api.jwstapi.com");
 
-                IOptions<JamesWebbApiSettings> options = services.GetRequiredService<IOptions<JamesWebbApiSettings>>();
+                IOptions<JamesWebbApiSettings> options =
+                    services.GetRequiredService<IOptions<JamesWebbApiSettings>>();
 
                 client.DefaultRequestHeaders.Add("X-API-KEY", options.Value.Key);
             })
             .AddHttpClientMetering()    // Meter overall request
             .AddHttpClientLogging()     // Log overall attempt
-            .AddStandardResilienceHandler(); ;
+            .AddStandardResilienceHandler();
 
         services.AddJamesWebbClient(
             configureOptions: static options =>
             options.JsonSerializerOptions = new(JsonSerializerDefaults.Web)
             {
                 PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance
+                PropertyNamingPolicy = SnakeOrCamelCaseNamingPolicy.Instance
             });
 
         return services;

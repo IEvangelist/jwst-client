@@ -3,14 +3,11 @@
 
 namespace Jwst.Client.Responses;
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="Version"></param>
-/// <param name="StatusCode"></param>
-/// <param name="Error"></param>
-public record class VersionResponse(
-    [property: JsonPropertyName("body")] string Version,
+public record VersionResponse(
     int StatusCode,
-    string? Error)
-    : Response(StatusCode, Error);
+    string Body,
+    string? Error) :
+    ResponseOf<string>(
+        StatusCode,
+        Body,
+        Error);
