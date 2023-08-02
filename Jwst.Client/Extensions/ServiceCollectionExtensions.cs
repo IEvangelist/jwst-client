@@ -1,6 +1,9 @@
 ﻿// Copyright (c) David Pine. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Extensions.Http.Resilience.FaultInjection;
+using Microsoft.Extensions.Options.Validation;
+
 namespace Jwst.Client.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -19,11 +22,13 @@ public static class ServiceCollectionExtensions
         services.Configure<JamesWebbApiSettings>(
             config: configuration.GetSection(key: JamesWebbApiSettings.SectionName));
 
-        services.AddSingleton<IValidateOptions<JamesWebbApiSettings>, JamesWebbApiSettings>();
+        services.AddValidatedOptions<JamesWebbApiSettings>();
 
         services.AddRedaction();
 
         services.AddLatencyContext();
+
+        services.AddHttpClientFaultInjection();
 
         services.AddDefaultHttpClientLatencyTelemetry();
 
