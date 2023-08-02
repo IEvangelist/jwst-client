@@ -6,10 +6,31 @@ This is a .NET source-generated client library for the [James Webb Space Telesco
 
 ## Get started
 
+Sign up for a free API key with an email address here https://jwstapi.com.
+
+## Configure the API key
+
+If you're using an _appsettings.json:_
+
+```json
+{
+    "JamesWebbApi": {
+        "Key": "<Your API Key>"
+    }
+}
+```
+
+Or perhaps an environment variable:
+
+```
+setx JamesWebbApi__Key "<Your API Key>"
+```
+
+## Consumption
+
 ```csharp
 var builder = Host.CreateApplicationBuilder(args);
 
-// Assumes you've configured the: "JamesWebbApi__Key"
 builder.Services.AddJameWebbClientServices(builder.Configuration);
 
 using var host = builder.Build();
